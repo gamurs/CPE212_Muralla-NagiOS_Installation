@@ -1,0 +1,42 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: update repo index (CentOS)
+    tags: always
+    dnf:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "CentOS"
+
+  - name: update repo index (Ubuntu)
+    tags: always
+    apt:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "Ubuntu"
+
+#  - name: Set SELinux to permissive mode (CentOS)
+#    ansible.builtin.shell: |
+#     sed -i 's/SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
+#      setenforce 0
+#   when: ansible_distribution == "CentOS"
+
+#  - name: Set SELinux to permissive mode (Ubuntu)
+#    shell: |
+#      sudo dpkg -l selinux*
+#    when: ansible_distribution == "Ubuntu"
+
+
+- hosts: CentOS
+  become: true
+  roles:
+    - centos_install
+  tags: ["done"]
+
+- hosts: Ubuntu
+  become: true
+  roles:
+    - ubuntu_install
